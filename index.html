@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPal - Your Pixel Study Companion</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: VT323 for pixel style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ONBOARDING SECTION -->
+    <section id="onboarding-section">
+        <div class="pixel-card onboarding-card">
+            <h1>CHOOSE YOUR CHARACTER</h1>
+            <div class="carousel-container">
+                <button id="prev-char" class="pixel-btn">&lt;</button>
+                <div class="character-display">
+                    <img id="char-preview" src="assets/charA.png" alt="Character Preview">
+                </div>
+                <button id="next-char" class="pixel-btn">&gt;</button>
+            </div>
+            <div class="input-group">
+                <label for="username">ENTER YOUR NAME:</label>
+                <input type="text" id="username" class="pixel-input" placeholder="Name..." autocomplete="off">
+            </div>
+            <button id="start-btn" class="pixel-btn primary-btn">START STUDY</button>
+        </div>
+    </section>
+
+    <!-- MAIN APP CONTAINER (Hidden initially) -->
+    <div id="main-app" class="hidden">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="pixel-sidebar">
+            <div class="sidebar-header">
+                <h2 style="margin-left: 40px;">StudyPal</h2> <!-- Added margin for toggle button space -->
+            </div>
+            <nav>
+                <ul>
+                    <li><button class="nav-btn active" data-target="home-view">HOME</button></li>
+                    <li><button class="nav-btn" data-target="schedule-view">SCHEDULE</button></li>
+                    <li><button class="nav-btn" data-target="tasks-view">QUESTS (TASKS)</button></li>
+                    <li><button class="nav-btn" data-target="pomodoro-view">POMODORO</button></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="reset-all-btn" class="pixel-btn danger-btn">RESET ALL</button>
+            </div>
+        </aside>
+
+        <!-- PERSISTENT TOGGLE BUTTON -->
+        <button id="main-toggle-btn" class="pixel-btn float-btn">☰</button>
+
+        <!-- MAIN CONTENT AREA -->
+        <main id="content-area">
+
+
+            <!-- HOME VIEW -->
+            <section id="home-view" class="view active-view">
+                <div class="welcome-banner">
+                    <h1 id="welcome-msg">WELCOME, STUDENT!</h1>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="pixel-card menu-card card-schedule" onclick="app.switchView('schedule-view')">
+                        <div class="curl"></div>
+                        <h3>SCHEDULE</h3>
+                        <p>📅</p>
+                        <p>Manage your classes</p>
+                    </div>
+                    <div class="pixel-card menu-card card-task" onclick="app.switchView('tasks-view')">
+                        <h3>QUESTS (TASKS)</h3>
+                        <p>⚔️</p>
+                        <p>Track your tasks</p>
+                    </div>
+                    <div class="pixel-card menu-card card-pomodoro" onclick="app.switchView('pomodoro-view')">
+                        <h3>POMODORO</h3>
+                        <p>⏰</p>
+                        <p>Focus timer</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCHEDULE VIEW -->
+            <section id="schedule-view" class="view hidden-view">
+                <div class="pixel-card full-width taped-paper">
+                    <div class="view-nav">
+                        <button class="pixel-btn small-btn" onclick="app.switchView('home-view')">← Back</button>
+                        <button class="pixel-btn small-btn" onclick="app.switchView('tasks-view')">Next →</button>
+                    </div>
+                    <h2>WEEKLY SCHEDULE</h2>
+                    <div class="table-responsive">
+                        <table class="pixel-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-list">
+                                <!-- Schedule items will go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Circular Add Button -->
+                    <button id="show-sched-form" class="circle-add-btn" onclick="document.getElementById('sched-form-row').classList.toggle('hidden')">+</button>
+                    
+                    <div id="sched-form-row" class="input-row hidden">
+                        <input type="text" id="sched-subject" class="pixel-input" placeholder="Subject">
+                        <select id="sched-day" class="pixel-input">
+                            <option value="Mon">Monday</option>
+                            <option value="Tue">Tuesday</option>
+                            <option value="Wed">Wednesday</option>
+                            <option value="Thu">Thursday</option>
+                            <option value="Fri">Friday</option>
+                            <option value="Sat">Saturday</option>
+                            <option value="Sun">Sunday</option>
+                        </select>
+                        <input type="time" id="sched-time" class="pixel-input">
+                        <button id="add-schedule-btn" class="pixel-btn">Add</button>
+                    </div>
+                    <button id="reset-schedule-btn" class="pixel-btn danger-btn" style="margin-top:20px;">RESET SCHEDULE</button>
+                </div>
+            </section>
+
+            <!-- TASKS / QUESTS VIEW -->
+            <section id="tasks-view" class="view hidden-view">
+                <div class="pixel-card full-width taped-paper">
+                    <div class="view-nav">
+                        <button class="pixel-btn small-btn" onclick="app.switchView('home-view')">← Back</button>
+                        <button class="pixel-btn small-btn" onclick="app.switchView('pomodoro-view')">Next →</button>
+                    </div>
+                    <h2>QUEST LOG</h2>
+                    
+                    <div id="task-list-container">
+                        <!-- Tasks go here -->
+                    </div>
+
+                     <!-- Circular Add Button -->
+                     <button id="show-task-form" class="circle-add-btn" onclick="document.getElementById('task-form-row').classList.toggle('hidden')">+</button>
+
+                    <div id="task-form-row" class="input-row hidden">
+                        <input type="text" id="task-desc" class="pixel-input" placeholder="Quest Description...">
+                        <input type="date" id="task-date" class="pixel-input">
+                        <input type="time" id="task-time" class="pixel-input">
+                        <button id="add-task-btn" class="pixel-btn">ADD QUEST</button>
+                    </div>
+                    <button id="reset-row-btn" class="pixel-btn danger-btn" style="margin-top:20px;">CLEAR COMPLETED</button>
+                </div>
+            </section>
+
+            <!-- POMODORO VIEW -->
+            <section id="pomodoro-view" class="view hidden-view">
+                <div class="pixel-card center-card">
+                    <div class="view-nav">
+                        <button class="pixel-btn small-btn" onclick="app.switchView('home-view')">← Back</button>
+                        <button class="pixel-btn small-btn" onclick="app.switchView('schedule-view')">Next →</button>
+                    </div>
+                    <h2>POMODORO TIMER</h2>
+                    <div class="pomo-layout">
+                        <div class="timer-modes vertical">
+                            <button class="mode-btn active" data-time="25">Focus</button>
+                            <button class="mode-btn" data-time="5">Short Break</button>
+                            <button class="mode-btn" data-time="15">Long Break</button>
+                        </div>
+                        <div class="timer-side">
+                            <div id="timer-display">25:00</div>
+                            <div class="timer-controls">
+                                <button id="timer-toggle-btn" class="pixel-btn primary-btn">START</button>
+                                <button id="reset-timer" class="pixel-btn danger-btn">RESET</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- CHARACTER WIDGET -->
+        <div id="character-widget">
+            <div id="speech-bubble" class="hidden">Let's study!</div>
+            <img id="widget-char-img" src="assets/charA.png" alt="Companion">
+        </div>
+
+    </div>
+
+    <!-- CUSTOM MODAL -->
+    <div id="custom-modal" class="modal hidden">
+        <div class="modal-content pixel-card">
+            <span class="close-modal">&times;</span>
+            <h3 id="modal-title">Alert</h3>
+            <p id="modal-message">Message goes here.</p>
+            <button id="modal-ok-btn" class="pixel-btn primary-btn">OK</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

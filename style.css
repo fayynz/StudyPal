@@ -1,0 +1,675 @@
+/* BASE STYLES */
+:root {
+    --bg-color: #FDF5E6; /* Beige/Cream (More Beige/White) */
+    --primary-color: #FF91A4; /* Salmon Pink */
+    --secondary-color: #AEC6CF; /* Pastel Blue (Replaces Green) */
+    --accent-color: #FFE5B4; /* Peach */
+    
+    --pastel-yellow: #FFF4BD;
+    --pastel-peach: #FFE5B4;
+    --pastel-lavender: #E6E6FA;
+    
+    --text-color: #4a4a4a;
+    --pixel-border: 4px solid #4a4a4a;
+    --font-main: 'VT323', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: var(--font-main);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 24px;
+    overflow-x: hidden;
+    /* Add a subtle pixel pattern to background */
+    background-image: 
+        linear-gradient(45deg, #fdf5e6 25%, transparent 25%, transparent 75%, #fdf5e6 75%, #fdf5e6),
+        linear-gradient(45deg, #fdf5e6 25%, transparent 25%, transparent 75%, #fdf5e6 75%, #fdf5e6);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+}
+
+/* UTILITIES */
+.hidden { display: none !important; }
+.view { display: none; animation: fadeIn 0.5s; }
+.active-view { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* PIXEL & PAPER COMPONENTS */
+.pixel-card {
+    background: #fff;
+    border: 2px solid #4a4a4a;
+    padding: 30px;
+    margin: 15px;
+    position: relative;
+    box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+}
+
+/* Tape effect for Onboarding & generic cards */
+.taped-paper::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 2px solid #4a4a4a;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+/* ONBOARDING */
+#onboarding-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--pastel-yellow); /* Warm start */
+    background-image: radial-gradient(#FFDAC1 15%, transparent 16%);
+    background-size: 20px 20px;
+}
+
+.onboarding-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    padding: 30px; /* Added padding for spacing */
+    background: #fff;
+    border: 4px solid #4a4a4a;
+    box-shadow: 10px 10px 0 #FFDAC1;
+}
+
+/* Section Specific Theme Backgrounds for Content Cards */
+#schedule-view .taped-paper {
+    background-color: #F0F8FF; /* Alice Blue (White/Blue mix) */
+    border-color: #4682B4;
+}
+#schedule-view .taped-paper::before {
+    background-color: rgba(174, 198, 207, 0.5); /* Pastel Blue Tape */
+}
+
+#tasks-view .taped-paper {
+    background-color: #FFF8E6; /* Very light Peach */
+    border-color: #D68C45;
+}
+#tasks-view .taped-paper::before {
+    background-color: rgba(255, 229, 180, 0.5); /* Peach Tape */
+}
+
+#pomodoro-view .center-card {
+    background-color: #FFE6EA; /* Very light Salmon Pink */
+    border-color: #C1121F;
+}
+
+.onboarding-card h1 {
+    font-family: var(--font-main);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+/* BUTTONS */
+.pixel-btn {
+    background: #fff;
+    border: 2px solid #4a4a4a;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 4px 4px 0px #4a4a4a;
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin: 5px;
+    font-family: var(--font-main);
+}
+
+.pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #4a4a4a;
+}
+
+.primary-btn { background-color: var(--primary-color); }
+.danger-btn { background-color: #ff9999; }
+
+/* Circular Add Button */
+.circle-add-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #4a4a4a;
+    background: var(--primary-color); /* Salmon Pink Default */
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 20px auto;
+    box-shadow: 3px 3px 0 #4a4a4a;
+    transition: transform 0.1s;
+}
+.circle-add-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #4a4a4a;
+}
+/* Specific overrides for sections to mix it up */
+#tasks-view .circle-add-btn {
+    background: var(--secondary-color); /* Magic Mint */
+}
+
+.pixel-input {
+    border: 2px solid #4a4a4a;
+    padding: 10px;
+    font-size: 1rem;
+    margin: 5px;
+    outline: none;
+    background: #fff;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+}
+.pixel-input:focus {
+    background-color: var(--pastel-peach);
+}
+
+
+/* Ensure start button has spacing */
+#start-btn {
+    margin-top: 20px;
+    width: 80%; /* Make it wider nicely */
+}
+
+/* Navigation within views */
+.view-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #4a4a4a;
+    padding-bottom: 10px;
+}
+
+.view-nav .pixel-btn {
+    font-size: 1rem;
+    padding: 5px 15px;
+}
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+    /* HOME VIEW - Sketchy Cards */
+.dashboard-grid {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 40px;
+}
+
+.menu-card {
+    width: 220px;
+    height: 220px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    background-color: #fff;
+    border: 2px solid #4a4a4a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+}
+
+.menu-card h3 { margin-bottom: 5px; font-size: 1.5rem; }
+.menu-card p { font-size: 0.9rem; color: #666; }
+.menu-card:hover { transform: scale(1.05) rotate(0deg) !important; z-index: 10; }
+
+/* 1. SCHEDULE CARD - Paper Clip & Curled Corner */
+.card-schedule {
+    transform: rotate(-2deg);
+    border-radius: 2px 2px 25px 2px; /* Bottom right curve */
+    background-color: var(--secondary-color); /* Magic Mint */
+}
+
+/* Paper Clip */
+.card-schedule::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    right: 30%;
+    width: 10px;
+    height: 30px;
+    border-radius: 10px;
+    border: 2px solid #4a4a4a;
+    background: transparent;
+    z-index: 5;
+}
+/* Creating the clip loop feeling loosely */
+.card-schedule::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: 32%;
+    width: 6px;
+    height: 25px;
+    border-radius: 10px;
+    border: 2px solid #4a4a4a;
+    background: #fff; /* Hide line behind - stays white or match bg? match bg needed if visible against card */
+    background: var(--secondary-color);
+    z-index: 6;
+}
+
+/* Curled corner visual trick */
+.card-schedule .curl {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.1) 50%);
+    border-top: 2px solid #4a4a4a;
+    border-left: 2px solid #4a4a4a;
+    border-radius: 5px 0 0 0;
+    background-color: #fff; /* Underside of paper usually white */
+}
+
+
+/* 2. TASK CARD - Ripped / Layered Look */
+.card-task {
+    transform: rotate(1deg);
+    background: var(--accent-color); /* Peach */
+    border: 2px solid #4a4a4a;
+    /* Layered effect */
+    box-shadow: 
+        5px 5px 0 #fff, 
+        7px 7px 0 #4a4a4a; 
+}
+
+/* Top "rip" or slight disorder */
+.card-task::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #4a4a4a;
+    z-index: -1;
+    transform: rotate(-2deg);
+    background: rgba(255,255,255,0.5);
+}
+
+
+/* 3. POMODORO CARD - Tape & Binder Holes */
+.card-pomodoro {
+    transform: rotate(-1deg);
+    background-color: var(--primary-color); /* Salmon Pink */
+}
+
+
+/* Tape at top left */
+.card-pomodoro::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 60px;
+    height: 25px;
+    background-color: rgba(255,255,255,0.8);
+    border: 2px solid #4a4a4a;
+    transform: rotate(-45deg);
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+}
+
+/* Binder Holes at top */
+.card-pomodoro::after {
+    content: '○  ○  ○';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1rem;
+    color: #4a4a4a;
+    letter-spacing: 5px;
+    font-weight: bold;
+}
+
+
+/* SCHEDULE & LISTS */
+.pixel-table {
+    border: none;
+    width: 100%; /* Widen table */
+    /* Lined paper effect */
+    background: repeating-linear-gradient(
+        #fff,
+        #fff 38px,
+        #C7CEEA 39px,
+        #C7CEEA 40px
+    );
+    background-attachment: local;
+}
+
+.pixel-table th {
+    background: var(--accent-color); /* Peach Header */
+    border: none;
+    border-bottom: 2px solid #4a4a4a;
+    padding: 10px;
+    color: #4a4a4a;
+}
+
+.pixel-table td {
+    border: none;
+    padding: 10px;
+    vertical-align: bottom;
+}
+
+/* TASKS */
+#task-list-container {
+    background: #fff;
+    padding: 20px;
+    min-height: 300px;
+    border: 2px solid #4a4a4a;
+    /* Lined paper */
+    background-image: linear-gradient(#C7CEEA 2px, transparent 2px);
+    background-size: 100% 40px;
+    line-height: 40px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    margin-bottom: 0;
+    box-shadow: none;
+    height: 40px;
+}
+
+.task-item.completed span {
+    text-decoration: line-through;
+    color: #888;
+    font-style: italic;
+}
+
+
+/* POMODORO */
+.timer-container {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pomo-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+}
+
+.timer-modes.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 120px;
+}
+
+.mode-btn {
+    background: #FFF;
+    margin: 0; /* Clear horizontal margin */
+    padding: 15px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.2s;
+}
+.mode-btn:hover {
+    transform: translateX(5px);
+}
+
+.mode-btn.active {
+    background: var(--secondary-color); /* Magic Mint */
+    border: 2px solid #4a4a4a;
+    font-weight: bold;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+.timer-side {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#timer-display {
+    font-size: 6rem; 
+    text-align: center;
+    margin: 0 auto; /* Remove top/bottom margin context */
+    margin-bottom: 20px;
+    font-weight: bold;
+    border: 4px solid #4a4a4a;
+    background: #fff;
+    width: 100%;
+    /* max-width: 500px; - Let flex handle it */
+    padding: 20px;
+    box-shadow: 10px 10px 0 var(--accent-color); /* Peach Shadow */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/* Center Titles in Cards */
+.taped-paper h2, .center-card h2 {
+    text-align: center;
+    margin-bottom: 30px; /* More space for title */
+    width: 100%;
+}
+
+/* Button Layout for Pomodoro */
+.timer-controls {
+    display: flex;
+    justify-content: center; /* Center buttons as requested */
+    gap: 20px; /* Add gap since we removed space-around */
+    align-items: flex-end;
+    margin-top: 40px;
+}
+
+#timer-toggle-btn {
+    width: 150px;
+    height: 60px;
+    font-size: 1.5rem;
+    /* Hatched border effect logic is complex in pure CSS, stick to dashed or double? */
+    border: 4px dashed #4a4a4a; 
+    background-color: var(--secondary-color); /* Magic Mint Button */
+}
+
+#reset-timer {
+    font-size: 1rem;
+    background: #fff;
+    transform: rotate(2deg);
+    background-color: var(--accent-color); /* Peach Button */
+}
+
+/* RESTORED LAYOUT STYLES */
+#char-preview {
+    width: 128px;
+    height: 128px;
+    image-rendering: pixelated;
+    border: 2px dashed #4a4a4a;
+    margin: 0 15px;
+    background: #fff;
+    padding: 10px;
+}
+
+#main-app {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* SIDEBAR */
+.pixel-sidebar {
+    width: 250px;
+    background-color: #fcfcfc;
+    border-left: 2px solid #4a4a4a; /* Sketchy style */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 60px; /* Space for button */
+    transition: transform 0.3s;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+}
+
+.pixel-sidebar.collapsed {
+    transform: translateX(100%); /* Move Right to hide */
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.pixel-sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.pixel-sidebar nav li {
+    margin-bottom: 20px;
+}
+
+.nav-btn {
+    width: 100%;
+    text-align: right;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem; /* Handwriting style size */
+    padding: 10px;
+    border-bottom: 2px dashed transparent;
+    text-decoration: none;
+    color: #4a4a4a;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    border-bottom: 2px dashed #4a4a4a;
+    color: var(--primary-color);
+}
+
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+#content-area {
+    flex-grow: 1;
+    padding: 20px;
+    margin-right: 250px; /* Margin on RIGHT now */
+    margin-left: 0;
+    transition: margin-right 0.3s;
+}
+
+/* If sidebar is collapsed */
+body.sidebar-hidden #content-area {
+    margin-right: 0;
+}
+
+#main-toggle-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px; /* Move to RIGHT */
+    left: auto;
+    z-index: 1100; /* Above sidebar */
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    transition: right 0.3s;
+}
+
+/* WIDGET RESTORED */
+#character-widget {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+#widget-char-img {
+    width: 150px; /* Increased from 100px */
+    image-rendering: pixelated;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+#widget-char-img:hover {
+    transform: translateY(-5px);
+}
+
+#speech-bubble {
+    position: absolute;
+    bottom: 170px; /* Adjusted for larger char */
+    left: 10px;
+    background: #fff;
+    border: 2px solid #4a4a4a;
+    padding: 10px;
+    border-radius: 10px;
+    width: 200px;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+#speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 20px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #4a4a4a transparent;
+    display: block;
+    width: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pixel-sidebar {
+        transform: translateX(100%); /* Hidden by default on mobile (off to right) */
+    }
+    
+    .pixel-sidebar.active-mobile {
+        transform: translateX(0);
+        box-shadow: -10px 0 20px rgba(0,0,0,0.2); /* Shadow on left side */
+    }
+
+    #content-area {
+        margin-right: 0;
+    }
+}
