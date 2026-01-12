@@ -17,7 +17,104 @@ const app = {
         "assets/charC.png"
     ],
     currentCharIndex: 0,
-    
+    // --- Character Dialogs ---
+characterDialogs: {
+    bunny: {
+        idle: [
+            "Hi! Let’s take today step by step.",
+            "It’s okay to stop and rest.",
+            "Let’s focus again, you’ve got this."
+        ],
+        urgent: [
+            "Hey… this task needs attention today."
+        ],
+        break: [
+            "Break time! Take a deep breath."
+        ],
+        stop: [
+            "It’s okay to stop and rest."
+        ],
+        done: "You did great! I’m proud of you."
+    },
+
+    pingu: {
+        idle: [
+            "Hey! Ready to get things done?",
+            "Let’s focus again!"
+        ],
+        urgent: [
+            "Uh-oh, this task is almost due!"
+        ],
+        break: [
+            "Break time! Stretch a little!"
+        ],
+        stop: [
+            "Alright, let’s stop here."
+        ],
+        done: "Yay! Task completed!"
+    },
+
+    foxy: {
+        idle: [
+            "Hey. Let’s plan your day.",
+            "Focus time again."
+        ],
+        urgent: [
+            "This deadline is very close."
+        ],
+        break: [
+            "Break time. Clear your mind."
+        ],
+        stop: [
+            "Stopping now is a smart choice."
+        ],
+        done: "Well done. Nice progress."
+    }
+},
+
+showConfirm: function(message, onConfirm) {
+    const modal = document.getElementById('confirm-modal');
+    document.getElementById('confirm-message').textContent = message;
+
+    modal.classList.remove('hidden');
+
+    const yesBtn = document.getElementById('confirm-yes');
+    const noBtn = document.getElementById('confirm-no');
+
+    const cleanup = () => {
+        modal.classList.add('hidden');
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+    };
+
+    yesBtn.onclick = () => {
+        cleanup();
+        onConfirm();
+    };
+
+    noBtn.onclick = cleanup;
+},
+
+// Pomodoro Cycle
+currentMode: 'focus',      // focus | short | long
+focusCount: 0,             // hitung focus selesai
+setModeByType: function(type) {
+    this.currentMode = type;
+
+    let minutes = 25;
+    if (type === 'short') minutes = 5;
+    if (type === 'long') minutes = 15;
+
+    // update active button UI
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.mode-btn[data-time="${minutes}"]`).classList.add('active');
+
+    this.timeLeft = minutes * 60;
+    this.updateTimerDisplay();
+},
+
+    pendingAction: null,
+
     // Pomodoro Timer
     timer: null,
     timeLeft: 25 * 60,
@@ -54,13 +151,21 @@ const app = {
         localStorage.setItem('studyPal_schedule', JSON.stringify(this.data.schedule));
         localStorage.setItem('studyPal_tasks', JSON.stringify(this.data.tasks));
     },
+    getCurrentCharacterKey: function () {
+    const avatar = this.data.user.avatar;
+
+    if (avatar.includes('charA')) return 'bunny';
+    if (avatar.includes('charB')) return 'pingu';
+    if (avatar.includes('charC')) return 'foxy';
+
+    return 'bunny'; // default fallback
+},
 
     bindEvents: function() {
         // Navigation / Sidebar
         // Navigation / Sidebar
         const toggleBtn = document.getElementById('main-toggle-btn');
         const sidebar = document.querySelector('.pixel-sidebar');
-
         toggleBtn.addEventListener('click', () => {
              const isCollapsed = sidebar.classList.toggle('collapsed');
              document.body.classList.toggle('sidebar-hidden');
@@ -85,7 +190,6 @@ const app = {
             }
         });
 
-
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const targetId = e.target.dataset.target;
@@ -109,34 +213,60 @@ const app = {
         // Schedule
         document.getElementById('add-schedule-btn').addEventListener('click', () => this.addScheduleItem());
         document.getElementById('reset-schedule-btn').addEventListener('click', () => {
-            this.data.schedule = [];
-            this.saveData();
-            this.renderSchedule();
-            this.showModal('Schedule cleared!');
-        });
+    this.showConfirm("Reset schedule?", () => {
+        this.data.schedule = [];
+        this.saveData();
+        this.renderSchedule();
+        this.showModal("Schedule cleared!");
+    });
+});
 
         // Tasks
         document.getElementById('add-task-btn').addEventListener('click', () => this.addTask());
-        document.getElementById('reset-row-btn').addEventListener('click', () => this.clearCompletedTasks());
+        document.getElementById('reset-row-btn').addEventListener('click', () => {
+    this.showConfirm("Clear all completed quests?", () => {
+        this.clearCompletedTasks();
+        this.showModal("Completed quests cleared!");
+    });
+});
 
         // Pomodoro
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.setTimerMode(e.target));
         });
         document.getElementById('timer-toggle-btn').addEventListener('click', () => this.toggleTimer());
-        document.getElementById('reset-timer').addEventListener('click', () => this.resetTimer());
+        document.getElementById('reset-timer').addEventListener('click', () => {
+    this.showConfirm("Reset pomodoro timer?", () => {
+        this.resetTimer();
+        this.showModal("Pomodoro reset!");
+    });
+});
 
         // Reset All
         document.getElementById('reset-all-btn').addEventListener('click', () => {
-            if(confirm("Are you sure you want to reset EVERYTHING? All data will be lost!")) {
-                localStorage.clear();
-                location.reload();
-            }
-        });
+    this.showConfirm(
+        "Reset EVERYTHING?\nAll progress will be lost!",
+        () => {
+            localStorage.clear();
+            location.reload();
+        }
+    );
+});
         
         // Modal
-        document.querySelector('.close-modal').addEventListener('click', () => this.closeModal());
-        document.getElementById('modal-ok-btn').addEventListener('click', () => this.closeModal());
+document.getElementById('modal-ok-btn').addEventListener('click', () => {
+    if (this.pendingAction) {
+        this.pendingAction();
+        this.pendingAction = null;
+    }
+    this.closeModal();
+});
+
+document.getElementById('modal-cancel-btn').addEventListener('click', () => {
+    this.pendingAction = null;
+    this.closeModal();
+});
+
     },
 
     checkOnboarding: function() {
@@ -161,8 +291,9 @@ const app = {
     finishOnboarding: function() {
         const name = document.getElementById('username').value.trim();
         if (!name) {
-            alert("Please enter your name!");
-            return;
+    this.showModal("Please enter your name!");
+    return;
+
         }
         this.data.user.name = name;
         this.data.user.avatar = this.characters[this.currentCharIndex];
@@ -312,7 +443,7 @@ const app = {
             this.renderTasks();
             if (task.completed) {
                 // REWARD: Chat bubble instead of modal
-                this.characterSpeak("Quest Complete! +10 EXP! Great job!");
+                this.characterSpeak('done');
             }
         }
     },
@@ -335,28 +466,34 @@ const app = {
             return diff > 0 && diff < (24 * 60 * 60 * 1000); // Less than 24h
         });
         
-        if (urgent && Math.random() > 0.7) { // 30% chance to remind to avoid spam
-             this.characterSpeak("You have tasks due soon!");
-        }
+        if (urgent && Math.random() > 0.7) {
+    this.characterSpeak('urgent');
+}
     },
 
     // --- Pomodoro Logic ---
-    setTimerMode: function(btn) {
-        if (this.isTimerRunning) return; // Prevent changing while running
-        
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        const mins = parseInt(btn.dataset.time);
-        this.timeLeft = mins * 60;
-        this.updateTimerDisplay();
-    },
+setTimerMode: function(btn) {
+    if (this.isTimerRunning) return;
+
+    const mins = parseInt(btn.dataset.time);
+
+    if (mins === 25) this.currentMode = 'focus';
+    if (mins === 5) this.currentMode = 'short';
+    if (mins === 15) this.currentMode = 'long';
+
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    this.timeLeft = mins * 60;
+    this.updateTimerDisplay();
+},
 
     toggleTimer: function() {
         const toggleBtn = document.getElementById('timer-toggle-btn');
         
         if (this.isTimerRunning) {
             // Pause
+            this.characterSpeak('stop');
             clearInterval(this.timer);
             this.isTimerRunning = false;
             // "pause switch to continue"
@@ -390,6 +527,9 @@ const app = {
         // Reset button to START
         const toggleBtn = document.getElementById('timer-toggle-btn');
         toggleBtn.textContent = 'START';
+        this.currentMode = 'focus';
+this.focusCount = 0;
+
     },
 
     updateTimerDisplay: function() {
@@ -400,44 +540,147 @@ const app = {
     },
 
     timerFinished: function() {
-        clearInterval(this.timer);
-        this.isTimerRunning = false;
-        
-        const toggleBtn = document.getElementById('timer-toggle-btn');
-        toggleBtn.textContent = 'START';
-        
-        this.characterSpeak("Time's up! Good focus!");
-        this.showModal("Timer Finished! Take a break or start working again.");
-    },
+    clearInterval(this.timer);
+    this.isTimerRunning = false;
+
+    const toggleBtn = document.getElementById('timer-toggle-btn');
+    toggleBtn.textContent = 'START';
+
+    // === AUTO CYCLE LOGIC ===
+    if (this.currentMode === 'focus') {
+        this.focusCount++;
+
+        if (this.focusCount >= 4) {
+            // 4x focus → long break
+            this.characterSpeak('break');
+            this.showModal("Great work! Long break time 🌴");
+            this.setModeByType('long');
+            this.focusCount = 0; // reset loop
+        } else {
+            // focus → short break
+            this.characterSpeak('break');
+            this.showModal("Focus done! Take a short break ☕");
+            this.setModeByType('short');
+        }
+
+    } else if (this.currentMode === 'short') {
+        // short break → focus
+        this.characterSpeak('idle');
+        this.showModal("Break over! Back to focus 🎯");
+        this.setModeByType('focus');
+
+    } else if (this.currentMode === 'long') {
+        // long break → focus
+        this.characterSpeak('idle');
+        this.showModal("Long break finished! New cycle starts 💪");
+        this.setModeByType('focus');
+    }
+},
 
     // --- Widget & Interactions ---
-    characterSpeak: function(text) {
-        const bubble = document.getElementById('speech-bubble');
-        bubble.textContent = text;
-        bubble.classList.remove('hidden');
-        bubble.style.animation = 'none';
-        bubble.offsetHeight; /* trigger reflow */
-        bubble.style.animation = 'popIn 0.3s'; // Reuse popIn or similar
-        
-        // Auto hide after 5 seconds
-        if (this.bubbleTimeout) clearTimeout(this.bubbleTimeout);
-        this.bubbleTimeout = setTimeout(() => {
-            bubble.classList.add('hidden');
-        }, 5000);
-    },
+    characterSpeak: function(type = 'idle') {
+    const bubble = document.getElementById('speech-bubble');
+    const charKey = this.getCurrentCharacterKey();
+    const dialogs = this.characterDialogs[charKey];
+
+    let text = '';
+
+    if (typeof dialogs[type] === 'string') {
+        text = dialogs[type];
+    } else if (Array.isArray(dialogs[type])) {
+        text = dialogs[type][Math.floor(Math.random() * dialogs[type].length)];
+    } else {
+        text = "Let's study!";
+    }
+
+    bubble.textContent = text;
+    bubble.classList.remove('hidden');
+    bubble.style.animation = 'none';
+    bubble.offsetHeight;
+    bubble.style.animation = 'popIn 0.3s';
+
+    clearTimeout(this.bubbleTimeout);
+    this.bubbleTimeout = setTimeout(() => {
+        bubble.classList.add('hidden');
+    }, 5000);
+},
+
     
     setupCharacterWidget: function() {
-        document.getElementById('widget-char-img').addEventListener('click', () => {
-            const msgs = [
-                "Keep going!",
-                "You can do this!",
-                "Don't forget to hydrate!",
-                "Focus mode: ON",
-                "Believe in yourself!"
-            ];
-            const randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
-            this.characterSpeak(randomMsg);
+        const widget = document.getElementById('character-widget');
+        const charImg = document.getElementById('widget-char-img');
+        
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        // Click to speak
+        charImg.addEventListener('click', (e) => {
+            if (!isDragging) {
+                this.characterSpeak('idle');
+            }
         });
+
+        // Drag functionality
+        charImg.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        // Touch support for mobile
+        charImg.addEventListener('touchstart', dragStart);
+        document.addEventListener('touchmove', drag);
+        document.addEventListener('touchend', dragEnd);
+
+        function dragStart(e) {
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+
+            if (e.target === charImg) {
+                isDragging = true;
+                charImg.style.cursor = 'grabbing';
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+
+                xOffset = currentX;
+                yOffset = currentY;
+
+                setTranslate(currentX, currentY, widget);
+            }
+        }
+
+        function dragEnd(e) {
+            if (isDragging) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                charImg.style.cursor = 'pointer';
+            }
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
     },
 
     showModal: function(msg) {
