@@ -62,12 +62,11 @@ Project ini dibuat sebagai **web apps sederhana** dan **project pembelajaran fro
    
 ---
 
-## Technologies Used
+## 🛠️ Technologies Used
 
 - **HTML** – for structuring web pages
 - **CSS** – for styling and layout
 - **JavaScript** – for application logic and interactivity
-- **GitHub Pages** – for deployment
 
 ---
 
