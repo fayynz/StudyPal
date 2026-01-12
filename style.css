@@ -549,8 +549,8 @@ body {
 
 /* RESTORED LAYOUT STYLES */
 #char-preview {
-    width: 128px;
-    height: 128px;
+    width: 240px;
+    height: 240px;
     image-rendering: pixelated;
     border: 2px dashed #4a4a4a;
     margin: 0 15px;
@@ -825,4 +825,5 @@ body.sidebar-hidden #content-area {
 .hidden {
     display: none;
 }
+
 
