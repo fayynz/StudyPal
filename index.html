@@ -62,8 +62,12 @@
             <!-- HOME VIEW -->
             <section id="home-view" class="view active-view">
                 <div class="welcome-banner">
-                    <h1 id="welcome-msg">WELCOME, STUDENT!</h1>
-                </div>
+    <h1 id="welcome-msg">WELCOME, STUDENT!</h1>
+    <div class="menu-select">
+    <span class="selector">▶</span>
+    <span class="welcome-subtext">choose your path :</span>
+</div>
+
                 <div class="dashboard-grid">
                     <div class="pixel-card menu-card card-schedule" onclick="app.switchView('schedule-view')">
                         <div class="curl"></div>
@@ -190,12 +194,27 @@
     </div>
 
     <!-- CUSTOM MODAL -->
-    <div id="custom-modal" class="modal hidden">
-        <div class="modal-content pixel-card">
-            <span class="close-modal">&times;</span>
-            <h3 id="modal-title">Alert</h3>
-            <p id="modal-message">Message goes here.</p>
-            <button id="modal-ok-btn" class="pixel-btn primary-btn">OK</button>
+<div id="custom-modal" class="modal hidden">
+  <div class="modal-content pixel-card">
+    <h3 id="modal-title">Alert</h3>
+    <p id="modal-message"></p>
+    <button id="modal-ok-btn" class="pixel-btn">OK</button>
+    <button id="modal-cancel-btn" class="pixel-btn danger-btn">CANCEL</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (HARUS DI LUAR) -->
+<div id="confirm-modal" class="modal-overlay hidden">
+  <div class="pixel-modal">
+    <p id="confirm-message"></p>
+    <div class="modal-actions">
+      <button id="confirm-yes" class="pixel-btn danger-btn">YES</button>
+      <button id="confirm-no" class="pixel-btn">NO</button>
+    </div>
+  </div>
+</div>
+
+
         </div>
     </div>
 
