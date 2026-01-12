@@ -180,7 +180,6 @@ body {
     background-color: var(--pastel-peach);
 }
 
-
 /* Ensure start button has spacing */
 #start-btn {
     margin-top: 20px;
@@ -826,3 +825,4 @@ body.sidebar-hidden #content-area {
 .hidden {
     display: none;
 }
+
